@@ -1,29 +1,23 @@
-import matplotlib.pyplot as plt
 import numpy as np
-
+import matplotlib.pyplot as plt
 from matplotlib.path import Path
 import matplotlib.patches as patches
-
 from operator import sub
-def get_aspect(ax):
-    # Total figure size
-    figW, figH = ax.get_figure().get_size_inches()
-    # Axis size on figure
-    _, _, w, h = ax.get_position().bounds
-    # Ratio of display units
-    disp_ratio = (figH * h) / (figW * w)
-    # Ratio of data units
-    # Negative over negative because of the order of subtraction
-    data_ratio = sub(*ax.get_ylim()) / sub(*ax.get_xlim())
 
+
+def get_aspect(ax):
+    figW, figH = ax.get_figure().get_size_inches()
+    _, _, w, h = ax.get_position().bounds
+    disp_ratio = (figH * h) / (figW * w)
+    data_ratio = sub(*ax.get_ylim()) / sub(*ax.get_xlim())
     return disp_ratio / data_ratio
+
 
 def draw_phase(phase, fig=None, ax=None, show=False, r=1, x0=0, y0=0,
                moon_kwargs=dict(lw=0, facecolor="wheat", clip_on=False)):
-
     y_scaling = 1 / get_aspect(ax)
 
-    rad = np.pi/180
+    rad = np.pi / 180
     f = np.cos(phase * rad)
     compare_func = (lambda i: np.cos(i * rad) > 0) if phase <= 180 else (lambda i: np.cos(i * rad) < 0)
 

@@ -1,12 +1,24 @@
-import requests
-import re
-from collections import defaultdict
-import os
-
-import bs4
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+import data
+
+plt.rc('font', family='serif')
+plt.rcParams['text.usetex'] = False
+fs = 24
+
+# update various fontsizes to match
+params = {'figure.figsize': (12, 8),
+          'legend.fontsize': 0.7 * fs,
+          'axes.labelsize': fs,
+          'xtick.labelsize': 0.6 * fs,
+          'ytick.labelsize': 0.6 * fs,
+          'axes.linewidth': 1.1,
+          'xtick.major.size': 7,
+          'xtick.minor.size': 4,
+          'ytick.major.size': 7,
+          'ytick.minor.size': 4}
+plt.rcParams.update(params)
 
 def plot_monthly(all_years=True, show=True, save=None):
     fig, ax = plt.subplots()
@@ -63,49 +75,10 @@ def plot_yearly(show=True, save=False):
     if show:
         plt.show()
 
-# regex to find the date in the submission text
-date_regex = r"\((\w+)\.* (\d+\.\d+) UT\)"
-
-# check if we have already saved the data
-file_path = "data/neocp-rates.npy"
-if os.path.exists(file_path):
-    all_submissions = np.load(file_path, allow_pickle=True).item()
-else:
-    all_submissions = {}
-
-    # go through each year
-    for year in range(2002, 2024):
-        print(f"Getting data for {year}...")
-
-        # grab the html and parse it
-        r = requests.get(f'https://birtwhistle.org.uk/NEOCPObjects{year}.htm')
-        soup = bs4.BeautifulSoup(r.text, 'html.parser')
-
-        # get the text specifically about submissions
-        submission_text_objs = soup.find_all(name='font', attrs={'face': 'Courier New'})
-        submissions = defaultdict(list)
-
-        for submission_text_obj in submission_text_objs:
-            submission_text = submission_text_obj.text
-            print(len(submission_text.split("\n")))
-
-            # find each date in the submissions with the regex
-            matches = re.finditer(date_regex, submission_text, re.MULTILINE)
-
-            # add each date separately to the list
-            for match in matches:
-                month = match.group(1)
-                day = match.group(2)
-                submissions[month.lower()].append(float(day))
-                
-            all_submissions[year] = submissions
-
-    np.save(file_path, all_submissions)
-
-print("All submissions processed.")
-
 months = ['jan', 'feb', 'mar', 'apr', 'may', 'june', 'july', 'aug', 'sept', 'oct', 'nov', 'dec']
 months_full = [m.capitalize() for m in months]
+
+all_submissions = data.get_submissions()
 
 # turn it into a dictionary of years, months and then submissions per day
 avg_per_day = all_submissions.copy()
@@ -131,28 +104,9 @@ for year in avg_per_day:
             samples = np.random.choice(counts, (len(counts), 1000), replace=True)
             std_per_day[year][month] = np.std(np.mean(samples, axis=0))
 
-plt.rc('font', family='serif')
-plt.rcParams['text.usetex'] = False
-fs = 24
-
-# update various fontsizes to match
-params = {'figure.figsize': (12, 8),
-          'legend.fontsize': 0.7 * fs,
-          'axes.labelsize': fs,
-          'xtick.labelsize': 0.6 * fs,
-          'ytick.labelsize': 0.6 * fs,
-          'axes.linewidth': 1.1,
-          'xtick.major.size': 7,
-          'xtick.minor.size': 4,
-          'ytick.major.size': 7,
-          'ytick.minor.size': 4}
-plt.rcParams.update(params)
-
 plot_monthly(show=False, save="figures/neocp-historical-monthly-all.pdf")
 plot_monthly(show=False, all_years=False, save="figures/neocp-historical-monthly-2023.pdf")
-
-plt.close('all')
-plot_yearly(show=True, save="figures/neocp-historical-years.pdf")
+plot_yearly(show=False, save="figures/neocp-historical-years.pdf")
 
 # print out the month average for the past 3 years
 for year in range(2021, 2024):

@@ -4,7 +4,7 @@ import numpy as np
 from collections import defaultdict
 
 import matplotlib.pyplot as plt
-import matplotlib as mpl
+import data
 import moon
 
 
@@ -81,35 +81,12 @@ def plot_spl_overall():
     plt.savefig("figures/neocp-lunation-overall.pdf", bbox_inches="tight", format="pdf", dpi=300)
     plt.show()
 
-# fig, ax = plt.subplots(figsize=(12, 7))
-
-# for i, month in enumerate(months):
-#     if month in ['jan', 'apr', 'july', 'oct']:
-#         ax.hist(lunations[month], weights=np.array(submissions[month]) / (24 - 20), bins=np.linspace(0, 1, 30),
-#                 histtype="step", color=plt.get_cmap("twilight")(i / 11), label=month.capitalize(), lw=3, cumulative=False)
-
-# ax.legend(ncol=2, loc='upper left')
-
-# ax.set(xlabel="Lunation", ylabel="Approximate\nsubmissions per day")
-
-# for i in np.arange(0, 1.1, 0.1):
-#     moon.draw_phase(i * 360, fig=fig, ax=ax, show=False, r=0.03, x0=i, y0=ax.get_ylim()[1] * 1.07)
-
-# plt.show()
-
-
-
-
-
-
-
-
 lunations = defaultdict(list)
 submissions = defaultdict(list)
 
 months = ['jan', 'feb', 'mar', 'apr', 'may', 'june', 'july', 'aug', 'sept', 'oct', 'nov', 'dec']
 
-sub_dict = np.load("data/neocp-rates.npy", allow_pickle=True).item()
+sub_dict = data.get_submissions()
 
 for year in range(2019, 2024):
     for month in sub_dict[year]:
