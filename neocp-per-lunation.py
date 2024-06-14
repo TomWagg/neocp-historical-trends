@@ -54,6 +54,7 @@ def plot_spl_by_month():
         moon.draw_phase(i * 360, fig=fig, ax=ax, show=False, r=0.03, x0=i, y0=ax.get_ylim()[1] * 1.07)
 
     plt.savefig("figures/neocp-lunation-by-month.pdf", bbox_inches="tight", format="pdf", dpi=300)
+    plt.savefig("figures/neocp-lunation-by-month.png", bbox_inches="tight", dpi=300)
     plt.show()
 
 
@@ -79,6 +80,7 @@ def plot_spl_overall():
         moon.draw_phase(i * 360, fig=fig, ax=ax, show=False, r=0.03, x0=i, y0=ax.get_ylim()[1] * 1.07)
 
     plt.savefig("figures/neocp-lunation-overall.pdf", bbox_inches="tight", format="pdf", dpi=300)
+    plt.savefig("figures/neocp-lunation-overall.png", bbox_inches="tight", dpi=300)
     plt.show()
 
 lunations = defaultdict(list)

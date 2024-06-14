@@ -45,6 +45,7 @@ def plot_monthly(all_years=True, show=True, save=None):
 
     if save is not None:
         plt.savefig(save, format='pdf', bbox_inches='tight', dpi=300)
+        plt.savefig(save.replace(".pdf", ".png"), bbox_inches='tight', dpi=300)
 
     if show:
         plt.show()
@@ -71,6 +72,7 @@ def plot_yearly(show=True, save=False):
 
     if save is not None:
         plt.savefig(save, format='pdf', bbox_inches='tight', dpi=300)
+        plt.savefig(save.replace(".pdf", ".png"), bbox_inches='tight', dpi=300)
 
     if show:
         plt.show()
